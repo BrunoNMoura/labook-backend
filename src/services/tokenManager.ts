@@ -17,7 +17,7 @@ export class TokenManager {
         return token
     }
 
-    public getPauload = (token:string): TokenPayload | null =>{
+    public getPayload = (token:string): TokenPayload | null =>{
         try {
             const payload = jwt.verify(token,process.env.JWT_KEY as string)
 
