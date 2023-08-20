@@ -1,4 +1,5 @@
 import { UserDatabase } from "../database/UserDatabase"
+import { BadRequestError } from "../errors/BadRequestError";
 import { User, UserDB } from "../models/User";
 import { USER_ROLES} from "../models/User";
 
@@ -12,7 +13,7 @@ export class UserBusiness{
         const { q, token } = input   
         
     
-        const resultDB: UserDB[] = await this.userDatabase.getUser(q)
+        const resultDB: UserDB[] = await this.userDatabase.findUsers(q)
     
         const output = resultDB.map((user) => {
           return {
@@ -40,9 +41,9 @@ export class UserBusiness{
           created_at: new Date().toISOString()
         }
         // verifica se o email já está em uso
-        const userExist = await this.userDatabase.findUser(email)
+        const userExist = await this.userDatabase.findUserByEmail(email)
         if (userExist != undefined) {
-          throw new Error("'email' já cadastrado")
+          throw new BadRequestError("'email' já cadastrado")
         }
     
         const output= await this.userDatabase.insertUser(newUserDB)   
@@ -54,12 +55,16 @@ export class UserBusiness{
     
       public login = async (input: any) => {
     
-        const { email } = input
-    
-        const userDB: UserDB = await this.userDatabase.findUser(email)
-        if (!userDB) {
-          throw new Error("Usuário não cadastrado")
-        }            
+        const { email, password} = input
+
+        const userDB = await this.userDatabase.findUserByEmail(email)
+
+        if(!userDB) {
+            throw new BadRequestError("'email' não encontrado!")
+        }
+        if(password !== userDB.password) {
+            throw new BadRequestError ("'email'ou 'password' incorretos")
+        }         
     
       }
 
