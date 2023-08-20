@@ -1,7 +1,7 @@
 import { PostDB, PostResultDB, PostUpdateDB } from "../models/Post";
 import { BaseDatabase } from "./BaseDatabase";
 
-export class PostDataBase extends BaseDatabase {
+export class PostDatabase extends BaseDatabase {
 
   TABLE_NAME = "posts"
 

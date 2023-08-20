@@ -1,5 +1,6 @@
 
 import { Request, Response } from "express"
+import { UserBusiness } from "../business/UserBusiness"
 export class UserController {
 
   constructor(private userBusiness: UserBusiness) { }
@@ -51,29 +52,5 @@ export class UserController {
             res.status(500).send("Unknown error");
           }
     }
-  }
-
-  public login = async (req: Request, res: Response): Promise<void> => {
-    try {
-
-      const input ={
-        email: req.body.email,
-        password: req.body.password
-      }
-
-      const output = await this.userBusiness.login(input)
-
-      res.status(200).send(output)
-
-    } catch (error) {
-        if (res.statusCode === 200) {
-            res.status(500);
-          }
-          if (error instanceof Error) {
-            res.send(error.message);
-          } else {
-            res.status(500).send("Unknown error");
-          }
-    }
-  }
+  }  
 }
