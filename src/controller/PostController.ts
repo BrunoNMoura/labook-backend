@@ -1,9 +1,9 @@
 
 import { Request, Response } from "express"
+import { PostBusiness } from "../business/PostBusiness"
 
 export class PostController {
-  constructor(private postBusiness: PostBusiness,
-    private likeDislikeBusiness: LikeDislikeBusiness) { }
+  constructor(private postBusiness: PostBusiness) { }
 
   public createPost = async (req: Request, res: Response) => {
 
