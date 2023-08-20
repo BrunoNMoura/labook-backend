@@ -1,72 +1,37 @@
-import { PostDatabase } from "../database/PostDatabase"
-import { NotFoundError } from "../errors/NotFoundError"
-import { PostDB, PostUpdateDB } from "../models/Post"
-
+import { PostDatabase } from "../database/PostDatabase";
+import { CreatePostInputDTO } from "../dtos/posts/createPost.dto";
+import { DeletePostInputDTO } from "../dtos/posts/deletePost.dto";
+import { GetPostInputDTO, GetPostOutputDTO } from "../dtos/posts/getPost.dto";
+import { UpdatePostInputDTO } from "../dtos/posts/updataPost.dto";
+import { BadRequestError } from "../errors/BadRequestError";
+import { NotFoundError } from "../errors/NotFoundError";
+import { PostDB, PostUpdateDB } from "../models/Post";
+import { USER_ROLES } from "../models/User";
+import { IdGenerator } from "../services/idGenerator";
+import { TokenManager } from "../services/tokenManager";
 
 export class PostBusiness {
   constructor(
-    private postDataBase: PostDatabase) { }
+    private postDataBase: PostDatabase,
+    private idGenerator: IdGenerator,
+    private tokenManager: TokenManager
+  ) {}
 
-  public createPost = async (input: any) : Promise<void>=> {
+  public getPost = async (
+    input: GetPostInputDTO
+  ): Promise<GetPostOutputDTO[]> => {
+    const { token } = input;
 
-    const { content, id, creatorId } = input
+    const payLoad = this.tokenManager.getPayload(token);
 
-    
-    const newPost: PostDB = {
-      id,
-      creator_id: creatorId,
-      content,
-      likes: 0,
-      dislikes: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-    await this.postDataBase.insertPost(newPost)
-  }
-
-  public editPost = async (id: string, input: any)=> {
-
-    const { content } = input
-
-   
-    const updatePost: PostUpdateDB = {
-      id,
-      content,
-      updated_at: new Date().toISOString()
+    if (payLoad == undefined) {
+      throw new BadRequestError("token inválido");
     }
 
-    const [resultPost] = await this.postDataBase.getPost()
+    const resultDB = await this.postDataBase.getPost();
 
-    if ( !resultPost) {
-      throw new NotFoundError("'id' não encontrado")
-    }
-    
-    
-    await this.postDataBase.updatePost(updatePost, id)
-  }
-
-
-  public deletePost = async (input:any)=> {
-    const { id} = input
-
-      
-    const [resultPost]:PostDB[] = await this.postDataBase.getPost()
-
-    if ( !resultPost) {
-      throw new NotFoundError("'id' não encontrado")
-    }
-     
-    await this.postDataBase.deletePost(id)
-  }
-
-  public getPost = async (input:any) => {
-
-    const { token } = input 
-    
-    const resultDB = await this.postDataBase.getPost()
-
-    const output= resultDB.map( post => {
-      const postNew={
+    const output: GetPostOutputDTO[] = resultDB.map((post) => {
+      const postNew = {
         id: post.id,
         content: post.content,
         likes: post.likes,
@@ -75,11 +40,83 @@ export class PostBusiness {
         updatedAt: post.updated_at,
         creator: {
           id: post.creator_id,
-          name: post.creator_name
-        }
-      }      
-      return postNew
-    }) 
-     return output
-  }  
+          name: post.creator_name,
+        },
+      };
+      return postNew;
+    });
+    return output;
+  };
+  public createPost = async (input: CreatePostInputDTO): Promise<void> => {
+    const { content, token } = input;
+
+    const payLoad = this.tokenManager.getPayload(token);
+
+    if (payLoad == undefined) {
+      throw new BadRequestError("token inválido");
+    }
+
+    const { id: creatorId } = payLoad;
+
+    const id = this.idGenerator.generate();
+
+    const newPost: PostDB = {
+      id,
+      creator_id: creatorId,
+      content,
+      likes: 0,
+      dislikes: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    await this.postDataBase.insertPost(newPost);
+  };
+  public editPost = async (
+    id: string,
+    input: UpdatePostInputDTO
+  ): Promise<void> => {
+    const { content, token } = input;
+
+    const payLoad = this.tokenManager.getPayload(token);
+    if (payLoad == undefined) {
+      throw new BadRequestError("token inválido");
+    }
+    const { id: creatorId } = payLoad;
+
+    const updatePost: PostUpdateDB = {
+      id,
+      content,
+      updated_at: new Date().toISOString(),
+    };
+
+    const [resultPost] = await this.postDataBase.getPost();
+
+    if (!resultPost) {
+      throw new NotFoundError("'id' não encontrado");
+    }
+
+    if (resultPost.creator_id != creatorId) {
+      throw new BadRequestError("Recurso negado");
+    }
+    await this.postDataBase.updatePost(updatePost, creatorId);
+  };
+  public deletePost = async (input: DeletePostInputDTO): Promise<void> => {
+    const { id, token } = input;
+
+    const payLoad = this.tokenManager.getPayload(token);
+    if (payLoad == undefined) {
+      throw new BadRequestError("token inválido");
+    }
+    const { id: creatorId, role } = payLoad;
+
+    const [resultPost]: PostDB[] = await this.postDataBase.getPost();
+
+    if (!resultPost) {
+      throw new NotFoundError("'id' não encontrado");
+    }
+    if (resultPost.creator_id != creatorId && role != USER_ROLES.ADMIN) {
+      throw new BadRequestError("Recurso negado");
+    }
+    await this.postDataBase.deletePost(id);
+  };
 }
