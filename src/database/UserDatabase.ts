@@ -5,25 +5,40 @@ export class UserDatabase extends BaseDatabase{
 
   TABLE_NAME = "users"
 
-  public insertUser = async (newUser:UserDB):Promise<void>=>{
+  public async findUsers(
+    q:string|undefined
+): Promise<UserDB[]> {
+    let userDB
 
-    await BaseDatabase.connection(this.TABLE_NAME).insert(newUser)
-
-  }
-
-  public findUser = async (email:string):Promise<UserDB> =>{
-    const [result]:UserDB[] = await BaseDatabase.connection("users").where({email})
-    return result
-  } 
-
-  public getUser = async (q:string):Promise<UserDB[]> =>{
-    let resultDB: UserDB[]
     if(q){
-      resultDB = await this.findByName(q)
-    } else {
-      resultDB = await this.findAll()
+        const result: UserDB[] = await BaseDatabase
+        .connection(this.TABLE_NAME)
+        .where("name","LIKE",`%${q}%`)
+        userDB = result
+    }else{
+        const result: UserDB[] = await BaseDatabase
+        .connection(this.TABLE_NAME)
+        userDB = result
     }
-        
-    return resultDB
-  } 
+
+    return userDB
+}
+
+public async findUserByEmail(
+    email:string
+){
+    const [userDB]:UserDB[] | undefined[] = await BaseDatabase
+    .connection(this.TABLE_NAME)
+    .where({email})
+
+    return userDB   
+}
+
+public async insertUser(
+    newUserDB: UserDB
+) {
+    await BaseDatabase
+    .connection(this.TABLE_NAME)
+    .insert(newUserDB)
+}
 }
