@@ -113,7 +113,7 @@ export class PostController {
         token: req.headers.authorization as string
       }
 
-      await this.likeDislikeBusiness.likeDislike(input)
+      //await this.likeDislikeBusiness.likeDislike(input)
 
       res.sendStatus(200)
 

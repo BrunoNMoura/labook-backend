@@ -12,6 +12,13 @@ export enum USER_ROLES {
     created_at: string  
   }
 
+  export interface UserModel {
+    id:string,
+    name:string,
+    email:string,
+    role: USER_ROLES,
+    createdAt:string}
+
   export class User{
     constructor(
         private id: string,
