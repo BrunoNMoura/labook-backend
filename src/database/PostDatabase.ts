@@ -16,9 +16,19 @@ export class PostDatabase extends BaseDatabase {
         "posts.creator_id",
         "u.name as creator_name"
       )
-      .innerJoin("users as u", "p.creator_id", "u.id");
+      .innerJoin("users as u", "p.creator_id","=", "u.id");
     return output;
   };
+  public findPostById = async (
+    id:string
+  ) => {
+    const [result] = await BaseDatabase
+    .connection("posts")
+    .select()
+    .where({id})
+
+    return result 
+  }
   public insertPost = async (newPost: PostDB): Promise<void> => {
     await BaseDatabase.connection(this.TABLE_NAME).insert(newPost);
   };
