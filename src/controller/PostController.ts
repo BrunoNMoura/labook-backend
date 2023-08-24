@@ -11,6 +11,7 @@ export class PostController {
   public getPost = async (req: Request, res: Response) => {
     try {
       const input = GetPostShema.parse({
+        q: req.query.q,
         token: req.headers.authorization,
       });
 

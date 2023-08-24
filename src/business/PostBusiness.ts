@@ -22,10 +22,10 @@ export class PostBusiness {
   ): Promise<GetPostOutputDTO[]> => {
     const { token } = input;
 
-    const payLoad = this.tokenManager.getPayload(token);
+    const payload = this.tokenManager.getPayload(token)
 
-    if (payLoad == undefined) {
-      throw new BadRequestError("token inválido");
+    if(!payload){
+      throw new BadRequestError("token inválido")
     }
 
     const resultDB = await this.postDataBase.getPost();
