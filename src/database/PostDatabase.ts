@@ -2,9 +2,9 @@ import { PostDB, PostResultDB, PostUpdateDB } from "../models/Post";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class PostDatabase extends BaseDatabase {
-  TABLE_NAME = "posts";
+   TABLE_NAME = "posts";
 
-  public getPost = async (): Promise<PostResultDB[]> => {
+   public getPost = async (): Promise<PostResultDB[]> => {
     const output: PostResultDB[] = await BaseDatabase.connection("posts")
       .select(
         "posts.id",
