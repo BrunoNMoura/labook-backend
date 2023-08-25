@@ -5,28 +5,10 @@ export class UserDatabase extends BaseDatabase{
 
     public static TABLE_USERS = "users"
 
-  public async findUsers(
-    q:string|undefined
-): Promise<UserDB[]> {
-    let userDB
-
-    if(q){
-        const result: UserDB[] = await BaseDatabase
-        .connection(UserDatabase.TABLE_USERS)
-        .where("name","LIKE",`%${q}%`)
-        userDB = result
-    }else{
-        const result: UserDB[] = await BaseDatabase
-        .connection(UserDatabase.TABLE_USERS)
-        userDB = result
-    }
-
-    return userDB
-}
 
 public async findUserByEmail(
     email:string
-){
+): Promise<UserDB | undefined>{
     const [userDB]:UserDB[] | undefined[] = await BaseDatabase
     .connection(UserDatabase.TABLE_USERS)
     .where({email})
@@ -36,7 +18,7 @@ public async findUserByEmail(
 
 public async insertUser(
     newUserDB: UserDB
-) {
+): Promise<void> {
     await BaseDatabase
     .connection(UserDatabase.TABLE_USERS)
     .insert(newUserDB)
