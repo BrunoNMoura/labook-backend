@@ -8,22 +8,17 @@ export interface PostDB {
   updated_at: string;
 }
 
-export interface PostUpdateDB {
-  id: string;
-  content: string;
-  updated_at: string;
+export interface PostDBWithCreatorName {
+  id: string,
+  creator_id: string,
+  content: string,
+  likes: number,
+  dislikes: number,
+  created_at: string,
+  updated_at: string,
+  creator_name: string
 }
 
-export interface PostResultDB {
-  id: string;
-  content: string;
-  likes: number;
-  dislikes: number;
-  created_at: string;
-  updated_at: string;
-  creator_id: string;
-  creator_name: string;
-}
 
 export interface PostModel {
   id: string;
@@ -44,7 +39,7 @@ export interface LikesDislikesDB {
   like: number;
 }
 
-export enum PLAYLIST_LIKE {
+export enum POST_LIKE {
   ALREADY_LIKED = "ALREADY LIKED",
   ALREADY_DISLIKED = "ALREADY DISLIKED"
 }

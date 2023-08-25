@@ -5,7 +5,8 @@ import { GetPostInputDTO, GetPostOutputDTO } from "../dtos/posts/getPost.dto";
 import { UpdatePostInputDTO } from "../dtos/posts/updataPost.dto";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
-import { PostDB, PostUpdateDB } from "../models/Post";
+import { UnauthorizedError } from "../errors/UnauthorizedError";
+import { Post, PostDB, PostUpdateDB } from "../models/Post";
 import { USER_ROLES } from "../models/User";
 import { IdGenerator } from "../services/idGenerator";
 import { TokenManager } from "../services/tokenManager";
@@ -19,32 +20,33 @@ export class PostBusiness {
 
   public getPost = async (
     input: GetPostInputDTO
-  ): Promise<GetPostOutputDTO[]> => {
+  ): Promise<GetPostOutputDTO> => {
     const { token } = input;
 
     const payload = this.tokenManager.getPayload(token)
 
     if(!payload){
-      throw new BadRequestError("token inválido")
+      throw new UnauthorizedError()
     }
 
     const resultDB = await this.postDataBase.getPost();
 
-    const output: GetPostOutputDTO[] = resultDB.map((post) => {
-      const postNew = {
-        id: post.id,
-        content: post.content,
-        likes: post.likes,
-        dislikes: post.dislikes,
-        createdAt: post.created_at,
-        updatedAt: post.updated_at,
-        creator: {
-          id: post.creator_id,
-          name: post.creator_name,
-        },
-      };
-      return postNew;
+    const posts = resultDB.map((post) => {
+      const postNew = new Post(
+        post.id,
+        post.content,
+        post.likes,
+        post.dislikes,
+        post.created_at,
+        post.updated_at,
+        post.creator_id,
+        post.creator_name,
+      )
+      return postNew.toBusinessModel();     
+      
     });
+    const output: GetPostOutputDTO = posts
+
     return output;
   };
   public createPost = async (input: CreatePostInputDTO): Promise<void> => {
@@ -75,7 +77,7 @@ export class PostBusiness {
     id: string,
     input: UpdatePostInputDTO
   ): Promise<void> => {
-    const { content, token } = input;
+    const { content, token, idToEdit } = input;
 
     const payLoad = this.tokenManager.getPayload(token);
     if (payLoad == undefined) {

@@ -3,7 +3,7 @@ import { BaseDatabase } from "./BaseDatabase"
 
 export class UserDatabase extends BaseDatabase{
 
-  TABLE_NAME = "users"
+    public static TABLE_USERS = "users"
 
   public async findUsers(
     q:string|undefined
@@ -12,12 +12,12 @@ export class UserDatabase extends BaseDatabase{
 
     if(q){
         const result: UserDB[] = await BaseDatabase
-        .connection(this.TABLE_NAME)
+        .connection(UserDatabase.TABLE_USERS)
         .where("name","LIKE",`%${q}%`)
         userDB = result
     }else{
         const result: UserDB[] = await BaseDatabase
-        .connection(this.TABLE_NAME)
+        .connection(UserDatabase.TABLE_USERS)
         userDB = result
     }
 
@@ -28,7 +28,7 @@ public async findUserByEmail(
     email:string
 ){
     const [userDB]:UserDB[] | undefined[] = await BaseDatabase
-    .connection(this.TABLE_NAME)
+    .connection(UserDatabase.TABLE_USERS)
     .where({email})
 
     return userDB   
@@ -38,7 +38,7 @@ public async insertUser(
     newUserDB: UserDB
 ) {
     await BaseDatabase
-    .connection(this.TABLE_NAME)
+    .connection(UserDatabase.TABLE_USERS)
     .insert(newUserDB)
 }
 }
