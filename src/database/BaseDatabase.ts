@@ -18,21 +18,5 @@ export abstract class BaseDatabase {
             }
         }
     })
-    abstract TABLE_NAME: string
-
-    protected async findAll():Promise<any>{
-        return await BaseDatabase.connection(this.TABLE_NAME)
-    }
-
-    protected async findById(id:string):Promise<any>{
-        return await BaseDatabase.connection(this.TABLE_NAME).where({id})
-    }
-    
-    public async findByName(name: string): Promise<any> {
-        return await BaseDatabase.connection(this.TABLE_NAME).where("name", "like", `%${name}%`)
-    }
-
-    protected async deleteById(id:string):Promise<any>{
-        return await BaseDatabase.connection(this.TABLE_NAME).del().where({id})
-    }
+   
 }
