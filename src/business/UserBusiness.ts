@@ -1,8 +1,10 @@
 import { UserDatabase } from "../database/UserDatabase";
+import { GetUsersInputDTO, GetUsersOutputDTO } from "../dtos/users/getUsers.dto";
 import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login.dto";
 import { SignupInputDTO, SignupOutputDTO } from "../dtos/users/signup.dto";
+import { PasswordInputDTO } from "../dtos/users/transformPassword.dto";
 import { BadRequestError } from "../errors/BadRequestError";
-import { User, USER_ROLES } from "../models/User";
+import {  User, USER_ROLES, UserDB } from "../models/User";
 import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/idGenerator";
 import { TokenManager, TokenPayload } from "../services/tokenManager";
@@ -14,6 +16,35 @@ export class UserBusiness {
     private tokenManager: TokenManager,
     private hashManager: HashManager
   ) {}
+
+  public getUsers = async (input: GetUsersInputDTO): Promise<GetUsersOutputDTO[]> => {
+
+    const { q, token } = input
+
+    const payload = this.tokenManager.getPayload(token)
+
+    if (payload === null) {
+      throw new BadRequestError("token inválido")
+    }
+
+    if (payload.role != USER_ROLES.ADMIN) {
+      throw new BadRequestError("somente admins podem acessar esse recurso")
+    }
+
+    const resultDB: UserDB[] = await this.userDatabase.getUser(q)
+
+    const output: GetUsersOutputDTO[] = resultDB.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.created_at
+      }
+    })
+    return output
+
+  }
   
   public singUp = async (input: SignupInputDTO): Promise<SignupOutputDTO> => {
     const { name, email, password } = input;
@@ -24,13 +55,15 @@ export class UserBusiness {
 
     const userDBExists = await this.userDatabase.findUserByEmail(email);
 
-   
+    if (userDBExists !== undefined) {
+      throw new BadRequestError("'email' já cadastrado")
+    }
 
     const newUser = new User(
       id,
       name,
       email,
-      password,
+      hashedPassword,
       USER_ROLES.NORMAL,
       new Date().toISOString()
     );
@@ -97,5 +130,37 @@ export class UserBusiness {
     }
 
     return output
-  }
+  }  
+
+  public passwordHash = async(
+    input:PasswordInputDTO
+):Promise<void>=>{
+
+    const {email, password} = input
+
+    const userDB = await this.userDatabase.findUserByEmail(email) 
+
+    if(!userDB) {
+        throw new BadRequestError("'email' não encontrado!")
+    }
+   
+    if(userDB.password !== password){
+        throw new BadRequestError ("'senha' inválida")
+    }
+
+    const hasPassword = await this.hashManager.hash(password)
+
+    const newUser = new User(
+        userDB.id,
+        userDB.name,
+        userDB.email,
+        hasPassword,
+        userDB.role,
+        userDB.created_at
+    )
+
+    const newUserDB = newUser.toDBModel()
+    await this.userDatabase.updatePassowrd(newUserDB)    
+    
+}
 }

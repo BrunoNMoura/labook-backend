@@ -17,6 +17,7 @@ const userController = new UserController(
         new HashManager()
     )
 )
-
+userRouter.get("/", userController.getUsers)
 userRouter.post("/signup", userController.singUp)
 userRouter.post("/login", userController.login)
+userRouter.put("/passwordHash",userController.passwordHash)

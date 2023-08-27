@@ -23,6 +23,7 @@ export enum USER_ROLES {
     email:string,
     role: USER_ROLES,
     createdAt:string}
+    
 
   export class User{
     constructor(

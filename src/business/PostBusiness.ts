@@ -56,7 +56,9 @@ export class PostBusiness {
 
     return output;
   };
-  public createPost = async (input: CreatePostInputDTO): Promise<void> => {
+  public createPost = async (input: CreatePostInputDTO):Promise<{
+    message: string;
+}> => {
     const { content, token } = input;
 
     const payLoad = this.tokenManager.getPayload(token);
@@ -78,7 +80,11 @@ export class PostBusiness {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    await this.postDataBase.insertPost(newPost);
+     await this.postDataBase.insertPost(newPost);
+    const output = {
+      message:"post criado com sucesso!"
+    }
+    return output
   };
   public editPost = async (
     input: UpdatePostInputDTO
@@ -114,7 +120,9 @@ export class PostBusiness {
     const updatedPosttDB = post.toDBModel();
     await this.postDataBase.updatePost(updatedPosttDB);
 
-    const output: UpdatePostOutputDTO = undefined;
+    const output: UpdatePostOutputDTO = {
+      message:"post alterado com sucesso!"
+    };
 
     return output;
   };
@@ -141,7 +149,9 @@ export class PostBusiness {
 
     await this.postDataBase.deletePost(idToDelete);
 
-    const output: DeletePostOutputDTO = undefined;
+    const output: DeletePostOutputDTO = {
+      message:"Post deletado com sucesso!"
+    };
 
     return output;
   };
@@ -160,10 +170,10 @@ export class PostBusiness {
       await this.postDataBase.findPostWithCreatorNameById(postId)
 
     if (!postDBWithCreatorName) {
-      throw new NotFoundError("playlist com essa id não existe")
+      throw new NotFoundError("Post com essa id não existe")
     }
 
-    const playlist = new Post(
+    const post = new Post(
       postDBWithCreatorName.id,
       postDBWithCreatorName.content,
       postDBWithCreatorName.likes,
@@ -188,32 +198,34 @@ export class PostBusiness {
     if (likeDislikeExists === POST_LIKE.ALREADY_LIKED) {
       if (like) {
         await this.postDataBase.removeLikeDislike(likeDislikeDB)
-        playlist.removeLike()
+        post.removeLike()
       } else {
         await this.postDataBase.updateLikeDislike(likeDislikeDB)
-        playlist.removeLike()
-        playlist.addDislike()
+        post.removeLike()
+        post.addDislike()
       }
 
     } else if (likeDislikeExists === POST_LIKE.ALREADY_DISLIKED) {
       if (like === false) {
         await this.postDataBase.removeLikeDislike(likeDislikeDB)
-        playlist.removeDislike()
+        post.removeDislike()
       } else {
         await this.postDataBase.updateLikeDislike(likeDislikeDB)
-        playlist.removeDislike()
-        playlist.addLike()
+        post.removeDislike()
+        post.addLike()
       }
 
     } else {
       await this.postDataBase.insertLikeDislike(likeDislikeDB)
-      like ? playlist.addLike() : playlist.addDislike()
+      like ? post.addLike() : post.addDislike()
     }
 
-    const updatedPlaylistDB = playlist.toDBModel()
-    await this.postDataBase.updatePost(updatedPlaylistDB)
+    const updatedPostDB = post.toDBModel()
+    await this.postDataBase.updatePost(updatedPostDB)
 
-    const output: LikeOrDislikeOutputDTO = undefined
+    const output: LikeOrDislikeOutputDTO = {
+      message:"like ou deslike atualizado com sucesso!"
+    }
 
     return output
   }
