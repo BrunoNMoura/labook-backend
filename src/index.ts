@@ -4,6 +4,8 @@ import { userRouter } from './router/userRouter'
 import dotenv from 'dotenv'
 import { postRouter } from './router/postRouter'
 
+//link postman: https://documenter.getpostman.com/view/26570541/2s9Y5YShoH
+
 dotenv.config()
 
 const app = express()

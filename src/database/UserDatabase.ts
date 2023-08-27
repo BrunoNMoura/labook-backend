@@ -15,11 +15,9 @@ public async findUserByEmail(
 
     return userDB   
 }
-
 public async findById(id: string): Promise<any> {
     return await BaseDatabase.connection(UserDatabase.TABLE_USERS).where({ id })
 }
-
 public async insertUser(
     newUserDB: UserDB
 ): Promise<void> {
@@ -27,7 +25,6 @@ public async insertUser(
     .connection(UserDatabase.TABLE_USERS)
     .insert(newUserDB)
 }
-
 public getUser = async (q:string):Promise<UserDB[]> =>{
     let resultDB: UserDB[]
     if(q){
@@ -40,14 +37,4 @@ public getUser = async (q:string):Promise<UserDB[]> =>{
         
     return resultDB
   } 
-  
-  public async updatePassowrd(
-    user:any
-){
-    await BaseDatabase
-    .connection(UserDatabase.TABLE_USERS)
-    .update({password:user.password})
-    .where({email:user.email})
-}
-
 }

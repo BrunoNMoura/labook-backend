@@ -6,7 +6,6 @@ import { ZodError } from "zod"
 import { BaseError } from "../errors/BaseError"
 import { SignupSchema } from "../dtos/users/signup.dto"
 import { GetUsersSchema } from "../dtos/users/getUsers.dto"
-import { PasswordSchema } from "../dtos/users/transformPassword.dto"
 export class UserController {
 
   constructor(private userBusiness: UserBusiness) { }
@@ -80,27 +79,5 @@ export class UserController {
         res.status(500).send("unexpected error");
       }
     }
-  }; 
-
-  public passwordHash = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const input = PasswordSchema.parse({
-        email: req.body.email,
-        password: req.body.password,
-      });
-
-      await this.userBusiness.passwordHash(input);
-
-      res.status(200).send("successfully changed password");
-    } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (error instanceof BaseError) {
-        res.status(error.statusCode).send(error.message);
-      } else {
-        res.status(500).send("unexpected error");
-      }
-    }
-  };
+  };   
 }
