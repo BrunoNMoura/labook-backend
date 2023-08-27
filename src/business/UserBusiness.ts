@@ -2,7 +2,6 @@ import { UserDatabase } from "../database/UserDatabase";
 import { GetUsersInputDTO, GetUsersOutputDTO } from "../dtos/users/getUsers.dto";
 import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login.dto";
 import { SignupInputDTO, SignupOutputDTO } from "../dtos/users/signup.dto";
-import { PasswordInputDTO } from "../dtos/users/transformPassword.dto";
 import { BadRequestError } from "../errors/BadRequestError";
 import {  User, USER_ROLES, UserDB } from "../models/User";
 import { HashManager } from "../services/HashManager";
@@ -132,35 +131,4 @@ export class UserBusiness {
     return output
   }  
 
-  public passwordHash = async(
-    input:PasswordInputDTO
-):Promise<void>=>{
-
-    const {email, password} = input
-
-    const userDB = await this.userDatabase.findUserByEmail(email) 
-
-    if(!userDB) {
-        throw new BadRequestError("'email' not found")
-    }
-   
-    if(userDB.password !== password){
-        throw new BadRequestError ("invalid password")
-    }
-
-    const hasPassword = await this.hashManager.hash(password)
-
-    const newUser = new User(
-        userDB.id,
-        userDB.name,
-        userDB.email,
-        hasPassword,
-        userDB.role,
-        userDB.created_at
-    )
-
-    const newUserDB = newUser.toDBModel()
-    await this.userDatabase.updatePassowrd(newUserDB)    
-    
-}
 }

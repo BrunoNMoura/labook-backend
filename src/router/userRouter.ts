@@ -20,4 +20,3 @@ const userController = new UserController(
 userRouter.get("/", userController.getUsers)
 userRouter.post("/signup", userController.singUp)
 userRouter.post("/login", userController.login)
-userRouter.put("/passwordHash",userController.passwordHash)
