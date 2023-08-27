@@ -3,7 +3,7 @@ import { BaseError } from "./BaseError";
 
 export class BadRequestError extends BaseError {
     constructor(
-        message: string = "Requesição inválida"
+        message: string = "Invalid request"
     ){
         super(400,message)
     }

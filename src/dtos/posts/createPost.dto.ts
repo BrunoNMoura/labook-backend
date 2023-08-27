@@ -12,10 +12,10 @@ export interface CreatePostOutputDTO{
 export const CreatePostSchema = z.object({
   content: z.string(
     {
-      required_error: "'content' é obrigatória",
-      invalid_type_error: "'content' deve ser uma string" 
+      required_error: "'content' is required",
+      invalid_type_error: "'content' must be a string" 
     }
-  ).min(1, "'content' inválido deve ter ao menos um caracter"),
+  ).min(1, "'content' must be at least one character"),
 
   token: z.string() // adicionamos token também no schema
 }).transform(data => data as CreatePostInputDTO)
