@@ -5,11 +5,9 @@ export interface UpdatePostInputDTO {
   token: string,
   idToEdit:string
 }
-
 export interface UpdatePostOutputDTO {
   message:string
 }
-
 export const UpdatePostSchema = z.object(
   {
     content: z.string().min(1),

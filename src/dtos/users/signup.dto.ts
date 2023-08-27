@@ -5,12 +5,10 @@ export interface SignupInputDTO {
     email:string,
     password:string
 }
-
 export interface SignupOutputDTO {
     message:string,
     token:string
 }
-
 export const SignupSchema = z.object({
     name:z.string().min(3),
     email: z.string().email(),

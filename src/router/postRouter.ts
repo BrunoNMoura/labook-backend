@@ -15,7 +15,6 @@ const postController = new PostController
       new IdGenerator(),
       new TokenManager())      
   )
-
 postRouter.post("/",postController.createPost)
 postRouter.get("/",postController.getPost)
 postRouter.put("/:id",postController.editPost)

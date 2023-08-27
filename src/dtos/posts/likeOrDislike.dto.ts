@@ -5,11 +5,9 @@ export interface LikeOrDislikeInputDTO {
   token: string,
   like: boolean
 }
-
 export interface LikeOrDislikeOutputDTO {
   message:string
 }
-
 export const LikeOrDislikePostSchema = z.object({
   postId: z.string().min(1),
   token: z.string().min(1),
