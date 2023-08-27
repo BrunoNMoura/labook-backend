@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { string, z } from "zod"
 
 export interface UpdatePostInputDTO {
   content: string,
@@ -6,7 +6,9 @@ export interface UpdatePostInputDTO {
   idToEdit:string
 }
 
-export type UpdatePostOutputDTO = undefined
+export interface UpdatePostOutputDTO {
+  message:string
+}
 
 export const UpdatePostSchema = z.object(
   {

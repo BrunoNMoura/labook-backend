@@ -4,7 +4,7 @@ import { UserDatabase } from "./UserDatabase";
 
 export class PostDatabase extends BaseDatabase {
   public static TABLE_POSTS = "posts"
-  public static TABLE_LIKES_DISLIKES = "likes_dislikes"
+  public static TABLE_LIKES_DISLIKES = "likes_deslikes"
 
    public getPost = async (): Promise<PostDBWithCreatorName[]> => {
     const output: PostDBWithCreatorName[] = await BaseDatabase.connection(PostDatabase.TABLE_POSTS)
@@ -57,7 +57,7 @@ export class PostDatabase extends BaseDatabase {
       .select(
         `${PostDatabase.TABLE_POSTS}.id`,
         `${PostDatabase.TABLE_POSTS}.creator_id`,
-        `${PostDatabase.TABLE_POSTS}.name`,
+        `${PostDatabase.TABLE_POSTS}.content`,
         `${PostDatabase.TABLE_POSTS}.likes`,
         `${PostDatabase.TABLE_POSTS}.dislikes`,
         `${PostDatabase.TABLE_POSTS}.created_at`,
@@ -83,7 +83,7 @@ export class PostDatabase extends BaseDatabase {
       .select()
       .where({
         user_id: likeDislikeDB.user_id,
-        playlist_id: likeDislikeDB.post_id
+        post_id: likeDislikeDB.post_id
       })
 
     if (result === undefined) {
@@ -104,7 +104,7 @@ export class PostDatabase extends BaseDatabase {
       .delete()
       .where({
         user_id: likeDislikeDB.user_id,
-        playlist_id: likeDislikeDB.post_id
+        post_id: likeDislikeDB.post_id
       })
   }
   public updateLikeDislike = async (
@@ -115,7 +115,7 @@ export class PostDatabase extends BaseDatabase {
       .update(likeDislikeDB)
       .where({
         user_id: likeDislikeDB.user_id,
-        playlist_id: likeDislikeDB.post_id
+        post_id: likeDislikeDB.post_id
       })
   }
   public insertLikeDislike = async (
