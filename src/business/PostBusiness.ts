@@ -64,7 +64,7 @@ export class PostBusiness {
     const payLoad = this.tokenManager.getPayload(token);
 
     if (payLoad == undefined) {
-      throw new BadRequestError("token inválido");
+      throw new BadRequestError("invalid token");
     }
 
     const { id: creatorId } = payLoad;
@@ -82,7 +82,7 @@ export class PostBusiness {
     };
      await this.postDataBase.insertPost(newPost);
     const output = {
-      message:"post criado com sucesso!"
+      message:"post created successfully!"
     }
     return output
   };
@@ -98,11 +98,11 @@ export class PostBusiness {
     const postDB = await this.postDataBase.findPostById(idToEdit);
 
     if (!postDB) {
-      throw new NotFoundError("playlist com essa id não existe");
+      throw new NotFoundError("post with that id does not exist");
     }
 
     if (payLoad.id !== postDB.creator_id) {
-      throw new ForbiddenError("somente quem criou a playlist pode editá-la");
+      throw new ForbiddenError("only the person who created the post can edit it");
     }
     const post = new Post(
       postDB.id,
@@ -121,7 +121,7 @@ export class PostBusiness {
     await this.postDataBase.updatePost(updatedPosttDB);
 
     const output: UpdatePostOutputDTO = {
-      message:"post alterado com sucesso!"
+      message:"post changed successfully!"
     };
 
     return output;
@@ -138,19 +138,19 @@ export class PostBusiness {
     const postDB = await this.postDataBase.findPostById(idToDelete);
 
     if (!postDB) {
-      throw new NotFoundError("playlist com essa id não existe");
+      throw new NotFoundError("post with this id does not exist");
     }
 
     if (payLoad.role !== USER_ROLES.ADMIN) {
       if (payLoad.id !== postDB.creator_id) {
-        throw new ForbiddenError("somente quem criou a playlist pode editá-la");
+        throw new ForbiddenError("only the person who created the post can delete it");
       }
     }
 
     await this.postDataBase.deletePost(idToDelete);
 
     const output: DeletePostOutputDTO = {
-      message:"Post deletado com sucesso!"
+      message:"Post successfully deleted!"
     };
 
     return output;
@@ -170,7 +170,7 @@ export class PostBusiness {
       await this.postDataBase.findPostWithCreatorNameById(postId)
 
     if (!postDBWithCreatorName) {
-      throw new NotFoundError("Post com essa id não existe")
+      throw new NotFoundError("Post with this id does not exist")
     }
 
     const post = new Post(
@@ -224,7 +224,7 @@ export class PostBusiness {
     await this.postDataBase.updatePost(updatedPostDB)
 
     const output: LikeOrDislikeOutputDTO = {
-      message:"like ou deslike atualizado com sucesso!"
+      message:"like or dislike successfully updated!"
     }
 
     return output

@@ -30,7 +30,7 @@ export class UserController {
       } else if (error instanceof BaseError) {
         res.status(error.statusCode).send(error.message)
       } else {
-        res.status(500).send("Erro inesperado")
+        res.status(500).send("unexpected error")
       }
     }
   }
@@ -55,7 +55,7 @@ export class UserController {
       } else if (error instanceof BaseError) {
         res.status(error.statusCode).send(error.message)
       } else {
-        res.status(500).send("Erro inesperado")
+        res.status(500).send("unexpected error")
       }
     }
   }  
@@ -77,7 +77,7 @@ export class UserController {
       } else if (error instanceof BaseError) {
         res.status(error.statusCode).send(error.message);
       } else {
-        res.status(500).send("Erro inesperado");
+        res.status(500).send("unexpected error");
       }
     }
   }; 
@@ -91,7 +91,7 @@ export class UserController {
 
       await this.userBusiness.passwordHash(input);
 
-      res.status(200).send("senha alterado com sucesso");
+      res.status(200).send("successfully changed password");
     } catch (error) {
       console.log(error);
       if (error instanceof ZodError) {
@@ -99,7 +99,7 @@ export class UserController {
       } else if (error instanceof BaseError) {
         res.status(error.statusCode).send(error.message);
       } else {
-        res.status(500).send("Erro inesperado");
+        res.status(500).send("unexpected error");
       }
     }
   };

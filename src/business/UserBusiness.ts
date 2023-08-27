@@ -24,11 +24,11 @@ export class UserBusiness {
     const payload = this.tokenManager.getPayload(token)
 
     if (payload === null) {
-      throw new BadRequestError("token inválido")
+      throw new BadRequestError("invalid token")
     }
 
     if (payload.role != USER_ROLES.ADMIN) {
-      throw new BadRequestError("somente admins podem acessar esse recurso")
+      throw new BadRequestError("only admins can access this feature")
     }
 
     const resultDB: UserDB[] = await this.userDatabase.getUser(q)
@@ -56,7 +56,7 @@ export class UserBusiness {
     const userDBExists = await this.userDatabase.findUserByEmail(email);
 
     if (userDBExists !== undefined) {
-      throw new BadRequestError("'email' já cadastrado")
+      throw new BadRequestError("'email' already registered")
     }
 
     const newUser = new User(
@@ -80,7 +80,7 @@ export class UserBusiness {
     const token = this.tokenManager.createToken(payload);
 
     const output: SignupOutputDTO = {
-      message:"Cadastro realizado com sucesso",
+      message:"Registration done successfully",
       token,
     };
 
@@ -95,7 +95,7 @@ export class UserBusiness {
     const userDB = await this.userDatabase.findUserByEmail(email)
 
     if (!userDB) {
-      throw new BadRequestError("e-mail e/ou senha inválido(s)")
+      throw new BadRequestError("Invalid email")
     }
 
     const user = new User(
@@ -113,7 +113,7 @@ export class UserBusiness {
       .compare(password, hashedPassword)
 
     if (!isPasswordCorrect) {
-      throw new BadRequestError("e-mail e/ou senha inválido(s)")
+      throw new BadRequestError("invalid password")
     }
 
     const payload: TokenPayload = {
@@ -125,7 +125,7 @@ export class UserBusiness {
     const token = this.tokenManager.createToken(payload)
 
     const output: LoginOutputDTO = {
-      message:"login realizado com sucesso!",
+      message:"Login successful!",
       token
     }
 
@@ -141,11 +141,11 @@ export class UserBusiness {
     const userDB = await this.userDatabase.findUserByEmail(email) 
 
     if(!userDB) {
-        throw new BadRequestError("'email' não encontrado!")
+        throw new BadRequestError("'email' not found")
     }
    
     if(userDB.password !== password){
-        throw new BadRequestError ("'senha' inválida")
+        throw new BadRequestError ("invalid password")
     }
 
     const hasPassword = await this.hashManager.hash(password)
