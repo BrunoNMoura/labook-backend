@@ -338,7 +338,7 @@ yarn start
 <br>
 ✅[JWT](https://jwt.io/)
 
-## 📺  Demonstration
+
 
 ## 📚 Documentation
 [View Postman-Labook-Backend](https://documenter.getpostman.com/view/26570541/2s9Y5YShoH)
