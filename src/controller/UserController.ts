@@ -8,8 +8,7 @@ import { SignupSchema } from "../dtos/users/signup.dto"
 import { GetUsersSchema } from "../dtos/users/getUsers.dto"
 export class UserController {
 
-  constructor(private userBusiness: UserBusiness) { }
-
+  constructor(private userBusiness: UserBusiness) {}
   public getUsers = async (req: Request, res: Response): Promise<void> => {
     try {
 
@@ -33,7 +32,6 @@ export class UserController {
       }
     }
   }
-
    public singUp = async (req: Request, res: Response): Promise<void> => {
 
     try {
@@ -58,7 +56,6 @@ export class UserController {
       }
     }
   }  
-
   public login = async (req: Request, res: Response): Promise<void> => {
     try {
       const input = LoginSchema.parse({

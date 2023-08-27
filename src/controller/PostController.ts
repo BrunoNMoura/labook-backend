@@ -10,7 +10,6 @@ import { LikeOrDislikePostSchema } from "../dtos/posts/likeOrDislike.dto";
 
 export class PostController {
   constructor(private postBusiness: PostBusiness) {}
-
   public getPost = async (req: Request, res: Response) => {
     try {
       const input = GetPostShema.parse({

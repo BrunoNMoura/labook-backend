@@ -4,11 +4,9 @@ export interface DeletePostInputDTO {
   idToDelete: string
   token: string
 }
-
 export interface DeletePostOutputDTO {
   message:string
 }
-
 export const DeletePostSchema = z.object(
   {
     idToDelete: z.string().min(1),

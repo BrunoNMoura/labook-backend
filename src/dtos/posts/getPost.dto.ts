@@ -4,7 +4,6 @@ import { PostModel } from "../../models/Post"
 export interface GetPostInputDTO {
   token: string 
 }
-
 export type GetPostOutputDTO = PostModel[]
 
 export const GetPostShema = z.object(
